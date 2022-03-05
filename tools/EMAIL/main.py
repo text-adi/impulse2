@@ -15,6 +15,11 @@ def flood(server, username, password: str, subject, body, target):
     # Send email
     try:
         server.sendmail(username, target, msg.encode('utf-8'))
+    except UnicodeEncodeError as err:
+        print(
+            f"{Fore.RED}[!] {Fore.YELLOW}Mail no sent to {target}.\n{Fore.MAGENTA}{err}{Fore.RESET}"
+        )
+        return True
     except Exception as err:
         print(
             f"{Fore.MAGENTA}Error while sending mail\n{Fore.MAGENTA}{err}{Fore.RESET}"
