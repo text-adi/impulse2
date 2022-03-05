@@ -1,3 +1,4 @@
+import codecs
 import sys
 import time
 from datetime import datetime
@@ -56,6 +57,7 @@ def main(file_get_email):
     list_email = file.read().split('\n')
     file.close()
     for get_email in file_get_email.read().split('\n'):  # читає список адрес
+
         try:
             if get_email == list_email[kilk_send_message]:
                 # пропускаємо ті електроні адреси, які вже надіслалися
@@ -63,8 +65,6 @@ def main(file_get_email):
                 continue
         except Exception:
             pass
-        else:
-            print(f"{Fore.MAGENTA}[!] {Fore.BLUE}Continuation of the attack.{Fore.RESET}")
 
         if kilk_send_message % 2:
             server, username, password = server1, username1, config.PASS_EMAIL_SEND_1
@@ -83,7 +83,7 @@ def main(file_get_email):
         # print(kilk_send_message)
 
         send_subject = config.SEND_SUBJECT
-        new_path = open(path).read()
+        new_path = codecs.open(path,'r', encoding='utf-8').read()
         if not flood(server, username, password, send_subject, new_path, get_email):
             sys.exit(1)
         add_first_line_email(get_email)
