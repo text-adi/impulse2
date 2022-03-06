@@ -1,0 +1,114 @@
+1.	Встановлює python 3.8.10
+
+ - Як для прикладу підійде сайт це на Centos 7. Якщо не працює команда yum, то перевірь чи працює команда apt . Якщо працює, то пробуй замінити замість yum на apt
+https://infoit.com.ua/linux/centos/kak-ustanovit-python-3-8-na-centos-7-centos-8/
+
+ - Водимо команди:
+sudo su 
+
+yum -y groupinstall "Development Tools"
+yum -y install openssl-devel bzip2-devel libffi-devel
+gcc --version
+
+ - Якщо ми бачимо це або подібне, то все встановлено:
+gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39) Copyright (C) 2015 Free Software Foundation, Inc. 
+This is free software; see the source for copying conditions. 
+There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ 
+ - Далі водимо команди:
+
+yum -y install wget
+wget https://www.python.org/ftp/python/3.8.10/Python-3.8.10.tgz
+tar xvf Python-3.8.10.tgz
+cd Python-3.8*/
+./configure --enable-optimizations
+make altinstall
+
+ - Тепер чекаємо 5-10 хв бо цей процес довгий. 
+ - Після установки python 3.8.10 має бути приблизно це:
+/tmp/tmp9ly9eo2d/pip-19.2.3-py2.py3-none-any.whl/pip/_vendor/ipaddress.py:1106: SyntaxWarning: 'str' object is not callable; perhaps you missed a comma? 
+/tmp/tmp9ly9eo2d/pip-19.2.3-py2.py3-none-any.whl/pip/_vendor/ipaddress.py:1106: SyntaxWarning: 'str' object is not callable; perhaps you missed a comma? Looking in links: 
+/tmp/tmp9ly9eo2d 
+Collecting setuptools Collecting pip Installing collected packages: setuptools, pip 
+Successfully installed pip-21.1.1 setuptools-56.0.0
+
+ - Щоб перевірити чи python встановлений запусти це:
+python3.8 --version
+
+ - Має бути результат такий:
+	Python 3.8.10
+
+ - Щоб перевірити чи pip встановлений запусти це:
+pip3.8 –-version
+
+ - Щось тіпа цього має бути
+	pip 21.1.1 from /usr/local/lib/python3.8/site-packages/pip (python 3.8)
+
+
+2. Тепер встановлюємо git щоб клонувати проект
+
+yum install git -y
+
+
+ - І клонуємо проект
+cd ..; git clone https://github.com/text-adi/impulse2.git
+
+ - Перевіряєємо наявність папки impulse2
+ls -la
+
+ - Переходимо в тут папку 
+cd impulse2/
+
+ - Встановлюємо бібліотеки які потрібні для роботи:
+pip3.8 install -r requirements.txt
+
+ - Перевіряємо чи проект може стартанути. Має запуститися проект:
+python3.8 __main__.py
+
+
+Далі, щоб проект сам перезапускався(інфу брав тут https://habr.com/ru/post/488560/), ми маємо додати/стовити новий процес. Якщо буде помилка, мабуть не встановлена програма nano. Щоб встановити пропиши
+yum install nano -y
+
+nano /etc/systemd/system/impulse2.service
+
+І вставляємо наступний текст
+
+[Unit]
+Description=Impulse2
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/impulse2
+ExecStart=/usr/local/bin/python3.8 /root/impulse2/__main__.py
+
+RestartSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+
+ - Щоб зберегти натисни Ctrl+O
+ - Після чого Enter
+ - Після чого Ctrl+X
+
+ - Після чого перезапускаемо програму яка відповідає за процеси
+systemctl daemon-reload
+systemctl enable impulse2
+
+- Має писати щось тіпа цього:
+Create symlink from /etc/systemd/system/ ....
+
+ - Запускаємо процес
+systemctl start impulse2
+
+systemctl status impulse2
+
+
+
+
+
+
+
